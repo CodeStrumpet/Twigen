@@ -4,3 +4,7 @@
 *.jar
 *.war
 *.ear
+
+
+# Credentials info
+Twitter_OAuth_Info.pde

@@ -1,35 +1,25 @@
 
 
-///////////////////////////// Config your setup here! ////////////////////////////
-/*
-consumer_key="BxNV6rkrwQerjQplHMF6w"
-consumer_secret="Jc7ErLh4lALITuwbLwnac0Ep9UGzAQMxjBdruBmCo"
-access_token = "14678022-qDVjoDpxb5OifvjkILJHN7Wxmq0us0R0kvYcWOMVu"
-access_token_secret = "1MazGrkwzRcV803LeixE4PxlgnKjYkBIpL2aRyQirg"
-*/
-
-
-import oscP5.*;
-import netP5.*;
-
 //for OSC
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
 
+// **************  OAuth info:  REPLACE WITH ACTUAL VALUES **************
 
-// This is where you enter your Oauth info
-static String OAuthConsumerKey = "BxNV6rkrwQerjQplHMF6w";
-static String OAuthConsumerSecret = "Jc7ErLh4lALITuwbLwnac0Ep9UGzAQMxjBdruBmCo";
-// This is where you enter your Access Token info
-static String AccessToken = "14678022-qDVjoDpxb5OifvjkILJHN7Wxmq0us0R0kvYcWOMVu";
-static String AccessTokenSecret = "1MazGrkwzRcV803LeixE4PxlgnKjYkBIpL2aRyQirg";
+//static String OAuthConsumerKey = "";
+//static String OAuthConsumerSecret = "";
+//static String AccessToken = "";
+//static String AccessTokenSecret = "";
+
+// **********************************************************************
+
+
 
 // if you enter keywords here it will filter, otherwise it will sample
 String keywords[] = {
 };
 
-///////////////////////////// End Variable Config ////////////////////////////
 
 TwitterStream twitter = new TwitterStreamFactory().getInstance();
 PImage img;
@@ -73,11 +63,6 @@ StatusListener listener = new StatusListener() {
 
     //println("@" + status.getUser().getScreenName() + " - " + status.getText());
 
-    String imgUrl = null;
-    String imgPage = null;
-
-    // Checks for images posted using twitter API
-
 
     GeoLocation geo = status.getGeoLocation();
     if (geo != null) {
@@ -87,12 +72,18 @@ StatusListener listener = new StatusListener() {
         sendOSCMessage(status.getText());
     } 
     
-    if (status.getText().contains("a")) {
-        //println("text w/ a: " + status.getText());
+    if (status.getText().contains("nye")) {
+        println("text w/ nye: " + status.getText());
     }
 
-/*
+    
 
+/*
+    // check for attached images...
+    
+    String imgUrl = null;
+    String imgPage = null;
+    
     if (status.getMediaEntities() != null) {
       imgUrl= status.getMediaEntities()[0].getMediaURL().toString();
     }
