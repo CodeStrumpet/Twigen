@@ -1,10 +1,5 @@
 
 
-//for OSC
-OscP5 oscP5;
-NetAddress myRemoteLocation;
-
-
 // **************  OAuth info:  REPLACE WITH ACTUAL VALUES **************
 
 //static String OAuthConsumerKey = "";
@@ -15,6 +10,16 @@ NetAddress myRemoteLocation;
 // **********************************************************************
 
 
+
+//for OSC
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+
+// for UI
+ControlP5 cp5;
+String filterString = "";
+static final String FILTER_TEXTFIELD_KEY = "filterText";
+Textarea tweetStreamTextArea;
 
 // if you enter keywords here it will filter, otherwise it will sample
 String keywords[] = {
@@ -36,13 +41,67 @@ void setup() {
 
   connectTwitter();
   twitter.addListener(listener);
-  if (keywords.length==0) twitter.sample();
-  else twitter.filter(new FilterQuery().track(keywords));
+  if (keywords.length==0) {
+      twitter.sample();
+  } else {
+      twitter.filter(new FilterQuery().track(keywords));
+  }
+  
+  // Interface stuff
+  PFont font = createFont("arial",20);  
+  cp5 = new ControlP5(this);
+  
+  
+  int hPadding = 20;
+  int vPadding = 20;
+  int rowHeight = 40;  
+  int currRowY = 70;
+  
+  cp5.addTextfield(FILTER_TEXTFIELD_KEY)
+      .setPosition(hPadding,currRowY)
+      .setSize(width - hPadding * 2, rowHeight)
+      .setFont(createFont("arial",18))
+      .setAutoClear(false)
+      ;
+      
+   currRowY = currRowY + rowHeight + vPadding;
+
+   cp5.addBang("refreshFilter")
+      .setPosition(hPadding, currRowY)
+      .setSize(80,rowHeight)
+      .getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER)
+      ;
+      
+    currRowY = currRowY + rowHeight * 2 + vPadding;
+    
+    
+      
+    tweetStreamTextArea = cp5.addTextarea("txt")
+                      .setPosition(hPadding, currRowY)
+                      .setSize(width - hPadding * 2,200)
+                      .setFont(createFont("arial",16))
+                      .setLineHeight(14)
+                      .setColor(color(128))
+                      .setColorBackground(color(255,100))
+                      .setColorForeground(color(255,100));
 }
 
 void draw() {
   background(0);
   if (imageLoaded) image(img, width/2, height/2);
+}
+
+void refreshFilter() {
+    
+    String currFilter = cp5.get(Textfield.class,FILTER_TEXTFIELD_KEY).getText();
+    
+    String[] newKeywords = splitTokens(currFilter, ",");
+    
+    twitter.filter(new FilterQuery().track(newKeywords));
+
+    tweetStreamTextArea.setText("");
+    
+    println("curr val: " + cp5.get(Textfield.class,FILTER_TEXTFIELD_KEY).getText());
 }
 
 // Initial connection
@@ -62,8 +121,11 @@ StatusListener listener = new StatusListener() {
   public void onStatus(Status status) {
 
     //println("@" + status.getUser().getScreenName() + " - " + status.getText());
-
-
+    
+    tweetStreamTextArea.setText(status.getText());
+    
+    sendOSCMessage(status.getText());
+ /*   
     GeoLocation geo = status.getGeoLocation();
     if (geo != null) {
         println("lat: " + geo.getLatitude() + " lon: " + geo.getLongitude());
@@ -73,10 +135,12 @@ StatusListener listener = new StatusListener() {
     } 
     
     if (status.getText().contains("nye")) {
-        println("text w/ nye: " + status.getText());
+        //println("text w/ nye: " + status.getText());
+        
+        
     }
 
-    
+   */ 
 
 /*
     // check for attached images...
