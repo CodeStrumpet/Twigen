@@ -95,7 +95,7 @@ void refreshFilter() {
     
     String currFilter = cp5.get(Textfield.class,FILTER_TEXTFIELD_KEY).getText();
     
-    String[] newKeywords = splitTokens(currFilter, ",");
+    String[] newKeywords = splitTokens(currFilter, ", ");
     
     twitter.filter(new FilterQuery().track(newKeywords));
 
